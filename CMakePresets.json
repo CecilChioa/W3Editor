@@ -1,0 +1,84 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 29,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [ "Windows" ]
+        }
+      }
+    },
+    {
+      "name": "debug",
+      "inherits": "default",
+      "displayName": "Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "relwithdebinfo",
+      "inherits": "default",
+      "displayName": "RelWithDebInfo",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "releasetracing",
+      "inherits": "default",
+      "displayName": "ReleaseTracing",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON",
+        "CMAKE_VISIBILITY_PRESET": "hidden",
+        "CMAKE_VISIBILITY_INLINES_HIDDEN": "ON",
+        "TRACY_ENABLE": "ON",
+        "TRACY_NO_EXIT": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": "default",
+      "displayName": "Release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON",
+        "CMAKE_VISIBILITY_PRESET": "hidden",
+        "CMAKE_VISIBILITY_INLINES_HIDDEN": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Debug",
+      "configurePreset": "debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "RelWithDebInfoTracing",
+      "configurePreset": "releasetracing",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Release",
+      "configurePreset": "release",
+      "configuration": "Release"
+    }
+  ]
+}
