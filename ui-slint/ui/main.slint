@@ -1,0 +1,233 @@
+component MenuItem inherits Rectangle {
+    in property <string> text;
+    in property <string> shortcut: "";
+    callback activate();
+    height: 24px;
+    background: item_touch.has-hover ? #cfdced : #f3f3f3;
+
+    item_touch := TouchArea {
+        clicked => { root.activate(); }
+    }
+
+    Text {
+        x: 10px;
+        y: (parent.height - self.height) / 2;
+        text: root.text;
+        color: #1a1a1a;
+        font-size: 12px;
+    }
+
+    Text {
+        x: parent.width - self.width - 12px;
+        y: (parent.height - self.height) / 2;
+        text: root.shortcut;
+        color: #3a3a3a;
+        font-size: 12px;
+    }
+}
+
+component MenuTab inherits Rectangle {
+    in property <string> text;
+    in property <bool> enabled: true;
+    callback activate();
+
+    width: 82px;
+    height: 24px;
+    background: tab_touch.has-hover ? #e6ecf5 : #00000000;
+
+    tab_touch := TouchArea {
+        enabled: root.enabled;
+        clicked => { root.activate(); }
+    }
+
+    Text {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        text: root.text;
+        color: root.enabled ? #2a2a2a : #9a9a9a;
+        font-size: 11px;
+    }
+}
+
+export component MainWindow inherits Window {
+    title: "W3Editor";
+    width: 900px;
+    height: 560px;
+    background: #ececec;
+
+    in-out property <string> selected_path: "";
+    in-out property <string> result_text: "未打开地图";
+    in-out property <bool> file_menu_open: false;
+    in-out property <int> active_menu: 0;
+    callback choose_map();
+    callback open_map();
+
+    FocusScope {
+        x: 0px;
+        y: 0px;
+        width: parent.width;
+        height: parent.height;
+
+        key-pressed(event) => {
+            if (event.modifiers.control && (event.text == "o" || event.text == "O")) {
+                root.choose_map();
+                root.open_map();
+                root.file_menu_open = false;
+                accept
+            } else if (event.modifiers.alt && (event.text == "f" || event.text == "F")) {
+                if (root.file_menu_open && root.active_menu == 0) {
+                    root.file_menu_open = false;
+                } else {
+                    root.active_menu = 0;
+                    root.file_menu_open = true;
+                }
+                accept
+            } else if (event.text == "\u{1b}") {
+                root.file_menu_open = false;
+                accept
+            } else {
+                reject
+            }
+        }
+
+    Rectangle {
+        x: 0px;
+        y: 0px;
+        width: parent.width;
+        height: parent.height;
+        background: #ececec;
+
+        VerticalLayout {
+            spacing: 0px;
+            width: parent.width;
+            height: parent.height;
+
+            Rectangle {
+                height: 24px;
+                background: #ededed;
+                border-width: 0px;
+                horizontal-stretch: 1;
+
+                HorizontalLayout {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                    padding-top: 0px;
+                    padding-bottom: 0px;
+                    spacing: 2px;
+
+                    MenuTab {
+                        text: "文件(F)";
+                        activate => {
+                            if (root.file_menu_open && root.active_menu == 0) {
+                                root.file_menu_open = false;
+                            } else {
+                                root.active_menu = 0;
+                                root.file_menu_open = true;
+                            }
+                        }
+                    }
+                    MenuTab { text: "编辑(E)"; activate => { root.active_menu = 1; root.file_menu_open = true; } }
+                    MenuTab { text: "查看(V)"; activate => { root.active_menu = 2; root.file_menu_open = true; } }
+                    MenuTab { text: "层面(L)"; activate => { root.active_menu = 3; root.file_menu_open = true; } }
+                    MenuTab { text: "情节(S)"; activate => { root.active_menu = 4; root.file_menu_open = true; } }
+                    MenuTab { text: "工具(T)"; activate => { root.active_menu = 5; root.file_menu_open = true; } }
+                    MenuTab { text: "高级(A)"; activate => { root.active_menu = 6; root.file_menu_open = true; } }
+                }
+            }
+
+            Rectangle { height: 1px; background: #c8c8c8; horizontal-stretch: 1; }
+
+            Rectangle {
+                background: #1f242b;
+                border-width: 0px;
+                padding: 10px;
+                horizontal-stretch: 1;
+                vertical-stretch: 1;
+
+                VerticalLayout {
+                    spacing: 8px;
+
+                    Text {
+                        text: "当前地图路径:";
+                        color: #dfe7ef;
+                        font-size: 12px;
+                    }
+
+                    TextInput {
+                        text <=> root.selected_path;
+                        read-only: true;
+                    }
+
+                    Rectangle {
+                        border-width: 1px;
+                        border-color: #3b4450;
+                        border-radius: 4px;
+                        background: #15191f;
+                        horizontal-stretch: 1;
+                        vertical-stretch: 1;
+
+                        Text {
+                            x: 8px;
+                            y: 8px;
+                            width: parent.width - 16px;
+                            text: root.result_text;
+                            color: #dfe7ef;
+                            font-size: 12px;
+                        }
+                    }
+                }
+            }
+        }
+
+        if root.file_menu_open : TouchArea {
+            x: 0px;
+            y: 24px;
+            width: parent.width;
+            height: parent.height - 24px;
+            clicked => { root.file_menu_open = false; }
+        }
+
+        if root.file_menu_open : Rectangle {
+            x: 6px;
+            y: 24px;
+            width: 330px;
+            height: root.active_menu == 0 ? 176px : 126px;
+            background: #f3f3f3;
+            border-width: 1px;
+            border-color: #bdbdbd;
+
+            if root.active_menu == 0 : VerticalLayout {
+                    padding-top: 4px;
+                    padding-bottom: 4px;
+                    spacing: 0px;
+
+                    MenuItem { text: "创建新地图(N)..."; shortcut: "Ctrl+N"; }
+                    MenuItem {
+                        text: "打开地图(O)...";
+                        shortcut: "Ctrl+O";
+                        activate => {
+                            root.choose_map();
+                            root.open_map();
+                            root.file_menu_open = false;
+                        }
+                    }
+                    MenuItem { text: "关闭地图(C)"; shortcut: "Ctrl+W"; }
+                    Rectangle { height: 1px; background: #d2d2d2; }
+                    MenuItem { text: "保存地图(S)"; shortcut: "Ctrl+S"; }
+                    MenuItem { text: "地图另存为...(A)"; }
+                    MenuItem { text: "计算阴影并保存地图(H)"; }
+            }
+
+            if root.active_menu != 0 : VerticalLayout {
+                padding-top: 4px;
+                padding-bottom: 4px;
+                spacing: 0px;
+
+                MenuItem { text: "功能开发中"; }
+                MenuItem { text: "后续将接入该菜单项"; }
+                MenuItem { text: "当前可用：文件 -> 打开地图"; }
+            }
+        }
+    }
+    }
+}

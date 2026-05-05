@@ -1,0 +1,8 @@
+[workspace]
+members = [
+  "app",
+  "core-map",
+  "render-wgpu",
+  "ui-slint"
+]
+resolver = "2"

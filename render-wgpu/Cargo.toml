@@ -1,0 +1,12 @@
+[package]
+name = "render-wgpu"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "render_wgpu"
+path = "src/lib.rs"
+
+[dependencies]
+wgpu = "0.20"
+winit = "0.29"

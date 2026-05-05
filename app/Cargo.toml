@@ -1,0 +1,15 @@
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+core-map = { path = "../core-map" }
+render-wgpu = { path = "../render-wgpu" }
+winit = "0.29"
+pollster = "0.3"
+log = "0.4"
+env_logger = "0.11"
+ui-slint = { path = "../ui-slint" }
+rfd = "0.14"
+slint = "=1.7.2"
