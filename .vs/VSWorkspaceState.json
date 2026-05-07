@@ -1,6 +1,15 @@
 {
+  "OutputFoldersPerTargetSystem": {
+    "Local Machine": [
+      "build\\debug",
+      "build\\relwithdebinfo",
+      "build\\releasetracing",
+      "build\\release"
+    ]
+  },
   "ExpandedNodes": [
     ""
   ],
+  "SelectedNode": "\\CMakeLists.txt",
   "PreviewInSolutionExplorer": false
 }
