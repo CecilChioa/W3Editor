@@ -1,5 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "vcpkg-configuration": {
+    "overlay-ports": [
+      "overlay-ports"
+    ]
+  },
   "name": "w3editor",
   "version": "0.7.0",
   "builtin-baseline": "188e85422b2a7713b46f33a2be6ce464db3c2bcd",
@@ -35,6 +40,7 @@
       "features": [
         "gui",
         "jpeg",
+        "network",
         "opengl",
         "png",
         "widgets"

@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmake *)",
+      "Bash(where cmake *)",
+      "Bash(C:/war3/mytool/W3Editor/cmake *)",
+      "Bash(\"C:/war3/mytool/W3Editor/cmake\" -S \"C:/war3/mytool/W3Editor\" -B \"C:/war3/mytool/W3Editor/build\")",
+      "Bash(\"C:/war3/mytool/W3Editor/cmake\" --build \"C:/war3/mytool/W3Editor/build\" --verbose)",
+      "Bash(C:/war3/mytool/W3Editor/build/W3Editor.exe *)",
+      "Bash(C:/war3/mytool/W3Editor/build/Debug/W3Editor.exe *)",
+      "Bash(C:/war3/mytool/W3Editor/build/Debug/W3Editor.exe close *)",
+      "Bash(/c/war3/mytool/W3Editor/build/Debug/W3Editor.exe *)",
+      "Bash(cmd.exe *)",
+      "Bash(/c/Windows/System32/cmd.exe *)",
+      "Bash(powershell.exe *)",
+      "Bash(python *)",
+      "Bash(\"C:/war3/mytool/W3Editor/build/Debug/W3Editor.exe\" --close)",
+      "Bash(/c/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe *)",
+      "Bash(build/Debug/W3Editor.exe *)"
+    ]
+  }
+}
