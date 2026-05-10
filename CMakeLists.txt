@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.31)
 
 project(W3Editor CXX)
 
@@ -12,6 +12,7 @@ find_package(glad CONFIG REQUIRED)
 find_package(soil2 CONFIG REQUIRED)
 find_package(stormlib CONFIG REQUIRED)
 find_package(BZip2 REQUIRED)
+find_package(ZLIB REQUIRED)
 find_package(CascLib CONFIG REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(qtadvanceddocking-qt6 CONFIG REQUIRED)
@@ -45,13 +46,18 @@ function(w3editor_copy_qt_plugins target_name)
 	)
 endfunction()
 
-add_executable(W3EditorHive
+add_executable(W3Editor
 	${QT_RESOURCES}
+)
+
+set_target_properties(W3Editor PROPERTIES
+	CXX_STANDARD 23
+	CXX_STANDARD_REQUIRED ON
 )
 
 add_subdirectory(src)
 
-target_include_directories(W3EditorHive PRIVATE
+target_include_directories(W3Editor PRIVATE
 	"src"
 	"src/base"
 	"src/brush"
@@ -69,7 +75,7 @@ target_include_directories(W3EditorHive PRIVATE
 	${BULLET_INCLUDE_DIR}
 )
 
-target_link_libraries(W3EditorHive PUBLIC
+target_link_libraries(W3Editor PUBLIC
 	mimalloc
 	Qt6::Gui
 	Qt6::Widgets
@@ -94,38 +100,36 @@ target_link_libraries(W3EditorHive PUBLIC
 	Tracy::TracyClient
 )
 
-target_compile_options(W3EditorHive PRIVATE
-	$<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus /MP /sdl /diagnostics:caret /permissive->
+target_compile_options(W3Editor PRIVATE
+	$<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus /sdl /diagnostics:caret /permissive- /translateInclude->
 	$<$<CXX_COMPILER_ID:Clang>:-Wextra -Wpedantic -Werror -Wno-multichar>
 	$<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic -Werror -Wno-multichar>
 )
 
-target_compile_definitions(W3EditorHive PRIVATE
+target_compile_definitions(W3Editor PRIVATE
 	$<$<CXX_COMPILER_ID:MSVC>:UNICODE _UNICODE>
 	$<$<CXX_COMPILER_ID:Clang>:TBB_SUPPRESS_DEPRECATED_MESSAGES>
 	$<$<CXX_COMPILER_ID:GNU>:TBB_SUPPRESS_DEPRECATED_MESSAGES>
 )
 
 if(TRACY_ENABLE)
-	target_compile_definitions(W3EditorHive PRIVATE TRACY_ENABLE)
+	target_compile_definitions(W3Editor PRIVATE TRACY_ENABLE)
 endif()
 
 if(TRACY_NO_EXIT)
-	target_compile_definitions(W3EditorHive PRIVATE TRACY_NO_EXIT)
+	target_compile_definitions(W3Editor PRIVATE TRACY_NO_EXIT)
 endif()
 
 if(WIN32)
-	target_link_libraries(W3EditorHive PUBLIC CascLib::casc)
+	target_link_libraries(W3Editor PUBLIC CascLib::casc)
 else()
-	target_link_libraries(W3EditorHive PUBLIC CascLib::casc_static)
+	target_link_libraries(W3Editor PUBLIC CascLib::casc_static)
 endif()
 
-target_compile_features(W3EditorHive PUBLIC cxx_std_23)
-
-add_custom_command(TARGET W3EditorHive POST_BUILD
+add_custom_command(TARGET W3Editor POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_directory
 	"${PROJECT_SOURCE_DIR}/data"
-	"$<TARGET_FILE_DIR:W3EditorHive>/data"
+	"$<TARGET_FILE_DIR:W3Editor>/data"
 )
 
-w3editor_copy_qt_plugins(W3EditorHive)
+w3editor_copy_qt_plugins(W3Editor)
