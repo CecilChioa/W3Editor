@@ -1,4 +1,5 @@
 #include "brush.h"
+#include "main_window/glwidget.h"
 
 import std;
 import Camera;
@@ -230,3 +231,5 @@ void Brush::render_selector() const {
 }
 
 void Brush::render_brush() {}
+
+#include "moc_brush.cpp"

@@ -35,7 +35,7 @@ export class ShadowMap {
 		const size_t expected_size = width * height;
 		const size_t file_size = reader.buffer.size();
 		if (file_size != expected_size) {
-			std::println("Error: Shadow map file size mismatch!");
+			std::cout << std::format("Error: Shadow map file size mismatch!") << '\n';
 			cells.resize(expected_size, 0);
 		} else {
 			cells = reader.read_vector<u8>(expected_size);

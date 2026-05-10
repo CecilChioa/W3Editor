@@ -31,27 +31,26 @@ void APIENTRY gl_debug_output(
 		return;
 	}
 
-	std::println("---------------");
-	std::println("Debug message ({})", message);
-
+	std::cout << std::format("---------------") << '\n';
+	std::cout << std::format("Debug message ({})", message) << '\n';
 	switch (source) {
 		case GL_DEBUG_SOURCE_API:
-			std::println("Source: API");
+			std::cout << std::format("Source: API") << '\n';
 			break;
 		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-			std::println("Source: Window System");
+			std::cout << std::format("Source: Window System") << '\n';
 			break;
 		case GL_DEBUG_SOURCE_SHADER_COMPILER:
-			std::println("Source: Shader Compiler");
+			std::cout << std::format("Source: Shader Compiler") << '\n';
 			break;
 		case GL_DEBUG_SOURCE_THIRD_PARTY:
-			std::println("Source: Third Party");
+			std::cout << std::format("Source: Third Party") << '\n';
 			break;
 		case GL_DEBUG_SOURCE_APPLICATION:
-			std::println("Source: Application");
+			std::cout << std::format("Source: Application") << '\n';
 			break;
 		case GL_DEBUG_SOURCE_OTHER:
-			std::println("Source: Other");
+			std::cout << std::format("Source: Other") << '\n';
 			break;
 		default:
 			break;
@@ -59,31 +58,31 @@ void APIENTRY gl_debug_output(
 
 	switch (type) {
 		case GL_DEBUG_TYPE_ERROR:
-			std::println("Type: Error");
+			std::cout << std::format("Type: Error") << '\n';
 			break;
 		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-			std::println("Type: Deprecated Behaviour");
+			std::cout << std::format("Type: Deprecated Behaviour") << '\n';
 			break;
 		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-			std::println("Type: Undefined Behaviour");
+			std::cout << std::format("Type: Undefined Behaviour") << '\n';
 			break;
 		case GL_DEBUG_TYPE_PORTABILITY:
-			std::println("Type: Portability");
+			std::cout << std::format("Type: Portability") << '\n';
 			break;
 		case GL_DEBUG_TYPE_PERFORMANCE:
-			std::println("Type: Performance");
+			std::cout << std::format("Type: Performance") << '\n';
 			break;
 		case GL_DEBUG_TYPE_MARKER:
-			std::println("Type: Marker");
+			std::cout << std::format("Type: Marker") << '\n';
 			break;
 		case GL_DEBUG_TYPE_PUSH_GROUP:
-			std::println("Type: Push Group");
+			std::cout << std::format("Type: Push Group") << '\n';
 			break;
 		case GL_DEBUG_TYPE_POP_GROUP:
-			std::println("Type: Pop Group");
+			std::cout << std::format("Type: Pop Group") << '\n';
 			break;
 		case GL_DEBUG_TYPE_OTHER:
-			std::println("Type: Other");
+			std::cout << std::format("Type: Other") << '\n';
 			break;
 		default:
 			break;
@@ -91,16 +90,16 @@ void APIENTRY gl_debug_output(
 
 	switch (severity) {
 		case GL_DEBUG_SEVERITY_HIGH:
-			std::println("Severity: high");
+			std::cout << std::format("Severity: high") << '\n';
 			break;
 		case GL_DEBUG_SEVERITY_MEDIUM:
-			std::println("Severity: medium");
+			std::cout << std::format("Severity: medium") << '\n';
 			break;
 		case GL_DEBUG_SEVERITY_LOW:
-			std::println("Severity: low");
+			std::cout << std::format("Severity: low") << '\n';
 			break;
 		case GL_DEBUG_SEVERITY_NOTIFICATION:
-			std::println("Severity: notification");
+			std::cout << std::format("Severity: notification") << '\n';
 			break;
 		default:
 			break;
@@ -119,11 +118,10 @@ GLWidget::GLWidget(QWidget* parent) : QOpenGLWidget(parent) {
 
 void GLWidget::initializeGL() {
 	if (!gladLoadGL()) {
-		std::println("Something went wrong initializing GLAD");
+		std::cout << std::format("Something went wrong initializing GLAD") << '\n';
 		exit(-1);
 	}
-	std::println("OpenGL {}.{}", GLVersion.major, GLVersion.minor);
-
+	std::cout << std::format("OpenGL {}.{}", GLVersion.major, GLVersion.minor) << '\n';
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(reinterpret_cast<GLDEBUGPROC>(gl_debug_output), nullptr);
@@ -318,3 +316,5 @@ void GLWidget::wheelEvent(QWheelEvent* event) {
 
 	camera.mouse_scroll_event(event);
 }
+
+#include "moc_glwidget.cpp"

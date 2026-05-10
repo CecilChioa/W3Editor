@@ -1,8 +1,10 @@
 #include "unit_brush.h"
+#include "glwidget.h"
+
+import std;
 
 #include <QKeyEvent>
 
-import std;
 import Hierarchy;
 import Texture;
 import WorldUndoManager;

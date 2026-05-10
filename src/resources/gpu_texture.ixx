@@ -44,7 +44,7 @@ export class GPUTexture : public Resource {
 					return hierarchy.open_file(new_path);
 				})
 				.or_else([&](const std::string&) {
-					std::println("Error loading texture {}", new_path.string());
+					std::cout << std::format("Error loading texture {}", new_path.string()) << '\n';
 					new_path = "Textures/btntempw.dds";
 					return hierarchy.open_file(new_path);
 				})
@@ -79,7 +79,7 @@ export class GPUTexture : public Resource {
 			);
 			if (id == 0) {
 				glCreateTextures(GL_TEXTURE_2D, 1, &id);
-				std::println("Error loading texture: {}", path.string());
+				std::cout << std::format("Error loading texture: {}", path.string()) << '\n';
 			}
 		}
 

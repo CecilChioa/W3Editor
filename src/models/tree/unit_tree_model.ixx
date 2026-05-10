@@ -48,7 +48,7 @@ export class UnitTreeModel : public BaseTreeModel {
 		if (const auto found = categories.find(race); found != categories.end()) {
 			return found->second.item->children[subIndex];
 		} else {
-			std::println("Unit with id: {} has no race set. Set a race!", id);
+			std::cout << std::format("Unit with id: {} has no race set. Set a race!", id) << '\n';
 			return categories.begin()->second.item->children[subIndex];
 		}
 	}

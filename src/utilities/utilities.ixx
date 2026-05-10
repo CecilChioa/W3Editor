@@ -6,11 +6,14 @@ export module Utilities;
 
 import std;
 import <glm/glm.hpp>;
+import <outcome/outcome.hpp>;
 import BinaryReader;
 import no_init_allocator;
 import types;
 
 namespace fs = std::filesystem;
+using OUTCOME_V2_NAMESPACE::failure;
+using OUTCOME_V2_NAMESPACE::result;
 
 // String functions
 export std::string_view trimmed(const std::string_view string) {
@@ -185,10 +188,6 @@ export auto read_file(const fs::path& path) -> std::expected<BinaryReader, std::
 
 	return BinaryReader(std::move(buffer));
 }
-
-export struct ItemSet {
-	std::vector<std::pair<int, std::string>> items;
-};
 
 // Returns 1 or -1
 export glm::vec2 sign_not_zero(glm::vec2 v) {

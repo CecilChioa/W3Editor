@@ -1,5 +1,8 @@
 #pragma once
 
+#include <QDialog>
+#include <QtWidgets/QToolButton>
+
 #include "ui_settings_editor.h"
 
 class SettingsEditor : public QDialog {

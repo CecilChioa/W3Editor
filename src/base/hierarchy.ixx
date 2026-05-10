@@ -12,9 +12,12 @@ import CASC;
 import MPQ;
 import no_init_allocator;
 import Utilities;
+import <outcome/outcome.hpp>;
 
 using namespace std::literals::string_literals;
 namespace fs = std::filesystem;
+using OUTCOME_V2_NAMESPACE::failure;
+using OUTCOME_V2_NAMESPACE::result;
 
 export class Hierarchy {
   public:
@@ -294,4 +297,4 @@ export class Hierarchy {
 	}
 };
 
-export inline Hierarchy hierarchy;
+export extern Hierarchy hierarchy;

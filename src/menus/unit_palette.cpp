@@ -1,4 +1,5 @@
-#include "unit_palette.h"
+#include <format>
+#include <string>
 
 #include <QComboBox>
 #include <QLineEdit>
@@ -10,7 +11,8 @@
 //#include <map_global.h>
 #include <object_editor.h>
 
-import std;
+#include "unit_palette.h"
+
 import TableModel;
 import WindowHandler;
 import MapGlobal;
@@ -181,3 +183,5 @@ void UnitPalette::update_selection_info() {
 		}
 	}
 }
+
+#include "moc_unit_palette.cpp"

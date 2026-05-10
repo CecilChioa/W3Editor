@@ -1,4 +1,7 @@
-﻿#include "doodad_palette.h"
+﻿#include <filesystem>
+#include <format>
+#include <fstream>
+#include <string>
 
 #include <QRadioButton>
 #include <QCheckBox>
@@ -33,7 +36,10 @@
 #include <QStandardPaths>
 #include <qurl.h>
 
-import std;
+#include "doodad_palette.h"
+
+namespace fs = std::filesystem;
+
 import TableModel;
 import QRibbon;
 import Doodad;
@@ -45,8 +51,6 @@ import MDX;
 import BinaryWriter;
 import BinaryReader;
 import Hierarchy;
-
-namespace fs = std::filesystem;
 
 DoodadPalette::DoodadPalette(QWidget* parent) : Palette(parent) {
 	ui.setupUi(this);
@@ -698,3 +702,5 @@ void DoodadPalette::set_selection_rotation(float new_rotation) {
 	brush.set_selection_angle(glm::radians(new_rotation));
 	update_selection_info();
 }
+
+#include "moc_doodad_palette.cpp"

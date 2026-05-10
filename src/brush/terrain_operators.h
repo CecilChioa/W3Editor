@@ -7,7 +7,6 @@
 
 class TerrainBrush;
 class Terrain;
-struct WorldEditContext;
 
 /// Base class for all terrain operators, such as texture painter, cliff tools etc...
 class TerrainOperator {
@@ -20,7 +19,7 @@ class TerrainOperator {
 
 	virtual void apply_begin(const QRect& area, int center_x, int center_y) = 0;
 	virtual QRect apply(const QRect& area, double frame_delta) = 0;
-	virtual void apply_end(WorldEditContext& ctx, const QRect& area) = 0;
+	virtual void apply_end(const QRect& area) = 0;
 
 	/// Checks whether the operator is active or not
 	bool is_enabled() const {
@@ -53,7 +52,7 @@ class HeightOperator: public TerrainOperator {
 
 	void apply_begin(const QRect& area, int center_x, int center_y) override;
 	QRect apply(const QRect& area, double frame_delta) override;
-	void apply_end(WorldEditContext& ctx, const QRect& area) override;
+	void apply_end(const QRect& area) override;
 
   private:
 	float deformation_height_ground;
@@ -68,7 +67,7 @@ class TextureOperator: public TerrainOperator {
 
 	void apply_begin(const QRect& area, int center_x, int center_y) override;
 	QRect apply(const QRect& area, double frame_delta) override;
-	void apply_end(WorldEditContext& ctx, const QRect& area) override;
+	void apply_end(const QRect& area) override;
 };
 
 class CliffOperator: public TerrainOperator {
@@ -91,7 +90,7 @@ class CliffOperator: public TerrainOperator {
 
 	void apply_begin(const QRect& area, int center_x, int center_y) override;
 	QRect apply(const QRect& area, double frame_delta) override;
-	void apply_end(WorldEditContext& ctx, const QRect& area) override;
+	void apply_end(const QRect& area) override;
 
 	void check_nearby(const int begx, const int begy, const int i, const int j, QRect& area) const;
 	void update_ramp(const int i, const int j, const int horizontal, const int vertical, QRect& area);
@@ -119,7 +118,7 @@ class CellOperator: public TerrainOperator {
 
 	void apply_begin(const QRect& area, int center_x, int center_y) override;
 	QRect apply(const QRect& area, double frame_delta) override;
-	void apply_end(WorldEditContext& ctx, const QRect& area) override;
+	void apply_end(const QRect& area) override;
 
 	void set_operation_type(cell_operation operation);
 	cell_operation get_operation_type();

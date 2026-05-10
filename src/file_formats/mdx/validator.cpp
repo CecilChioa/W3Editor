@@ -80,7 +80,7 @@ namespace mdx {
 		IDs.reserve(node_count);
 		for_each_node([&](mdx::Node& node) {
 			if (node.id < 0) {
-				std::println("Error: MDX {} node \"{}\" has invalid ID {}", name, node.name, node.id);
+				std::cout << std::format("Error: MDX {} node \"{}\" has invalid ID {}", name, node.name, node.id) << '\n';
 				return;
 			}
 			IDs.push_back(node.id);
@@ -94,7 +94,7 @@ namespace mdx {
 
 		for_each_node([&](mdx::Node& node) {
 			if (node.id == -1) {
-				std::println("Error: Invalid node \"{}\" with ID -1", node.name);
+				std::cout << std::format("Error: Invalid node \"{}\" with ID -1", node.name) << '\n';
 				return;
 			}
 			node.id = remapping[node.id];
@@ -105,12 +105,12 @@ namespace mdx {
 
 		for (auto& i : geosets) {
 			if (i.uv_sets.empty()) {
-				std::println("Error: No UV sets in model");
+				std::cout << std::format("Error: No UV sets in model") << '\n';
 				return;
 			}
 
 			if (!i.vertex_groups.empty() && !i.skin.empty()) {
-				std::println("Error: Both vertex_groups and skin weights are set");
+				std::cout << std::format("Error: Both vertex_groups and skin weights are set") << '\n';
 				return;
 			}
 
@@ -119,21 +119,21 @@ namespace mdx {
 				same = same && i.vertices.size() == i.vertex_groups.size();
 
 				if (!same) {
-					std::println("One or more of these are inequal.\nvertices: {}\nuv_sets: {}\nnormals: {}\nvertex_groups: {}", i.vertices.size(), i.uv_sets.front().size(), i.normals.size(), i.vertex_groups.size());
+					std::cout << std::format("One or more of these are inequal.\nvertices: {}\nuv_sets: {}\nnormals: {}\nvertex_groups: {}", i.vertices.size(), i.uv_sets.front().size(), i.normals.size(), i.vertex_groups.size()) << '\n';
 					return;
 				}
 			} else {
 				same = same && i.vertices.size() == i.skin.size() / 8;
 
 				if (!same) {
-					std::println("One or more of these are inequal.\nvertices: {}\nuv_sets: {}\nnormals: {}\nskin weights: {}", i.vertices.size(), i.uv_sets.front().size(), i.normals.size(), i.skin.size() / 8);
+					std::cout << std::format("One or more of these are inequal.\nvertices: {}\nuv_sets: {}\nnormals: {}\nskin weights: {}", i.vertices.size(), i.uv_sets.front().size(), i.normals.size(), i.skin.size() / 8) << '\n';
 					return;
 				}
 			}
 
 			for (const auto& set : i.uv_sets) {
 				if (set.empty()) {
-					std::println("Error: Empty UV set");
+					std::cout << std::format("Error: Empty UV set") << '\n';
 					return;
 				}
 			}

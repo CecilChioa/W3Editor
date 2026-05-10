@@ -6,10 +6,12 @@ cd /d "%~dp0"
 set "CMAKE_EXE=cmake"
 where cmake >nul 2>nul
 if errorlevel 1 (
-  for %%E in (Community Professional Enterprise BuildTools) do (
-    if exist "C:\Program Files\Microsoft Visual Studio\2022\%%E\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" (
-      set "CMAKE_EXE=C:\Program Files\Microsoft Visual Studio\2022\%%E\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
-      goto :found_cmake
+  for %%V in (18 2022) do (
+    for %%E in (Community Professional Enterprise BuildTools) do (
+      if exist "C:\Program Files\Microsoft Visual Studio\%%V\%%E\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" (
+        set "CMAKE_EXE=C:\Program Files\Microsoft Visual Studio\%%V\%%E\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+        goto :found_cmake
+      )
     )
   )
   echo [error] CMake was not found.

@@ -2,12 +2,7 @@
 
 import QRibbon;
 
-#include <QObject>
-#include <QToolButton>
-
 class MainRibbon : public QRibbon {
-	Q_OBJECT
-
 public:
 	QRibbonButton* undo = new QRibbonButton;
 	QRibbonButton* redo = new QRibbonButton;
@@ -51,17 +46,17 @@ public:
 	QRibbonButton* unit_palette = new QRibbonButton;
 	QRibbonButton* pathing_palette = new QRibbonButton;
 
-	QToolButton* new_map = new QToolButton;
-	QToolButton* open_map_mpq = new QToolButton;
-	QToolButton* open_map_folder = new QToolButton;
+	QRibbonButton* new_map = new QRibbonButton;
+	QRibbonButton* open_map_mpq = new QRibbonButton;
+	QRibbonButton* open_map_folder = new QRibbonButton;
 
-	QToolButton* save_map = new QToolButton;
-	QToolButton* save_map_as = new QToolButton;
-	QToolButton* export_mpq = new QToolButton;
+	QRibbonButton* save_map = new QRibbonButton;
+	QRibbonButton* save_map_as = new QRibbonButton;
+	QRibbonButton* export_mpq = new QRibbonButton;
 
-	QToolButton* test_map = new QToolButton;
-	QToolButton* settings = new QToolButton;
-	QToolButton* exit = new QToolButton;
+	QRibbonButton* test_map = new QRibbonButton;
+	QRibbonButton* settings = new QRibbonButton;
+	QRibbonButton* exit = new QRibbonButton;
 
 	MainRibbon(QWidget* parent);
 	~MainRibbon();

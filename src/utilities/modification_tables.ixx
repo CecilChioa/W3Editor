@@ -23,7 +23,7 @@ void load_modification_table(BinaryReader& reader, const uint32_t version, slk::
 		if (version >= 3) {
 			const uint32_t set_count = reader.read<uint32_t>();
 			if (set_count > 1) {
-				std::println("Set count of {} detected", set_count);
+				std::cout << std::format("Set count of {} detected", set_count) << '\n';
 			}
 			const uint32_t set_flag = reader.read<uint32_t>();
 		}
@@ -62,12 +62,12 @@ void load_modification_table(BinaryReader& reader, const uint32_t version, slk::
 					data = reader.read_c_string();
 					break;
 				default:
-					std::println("Unknown data type {} while loading modification table.", type);
+					std::cout << std::format("Unknown data type {} while loading modification table.", type) << '\n';
 			}
 			reader.advance(4);
 
 			if (column_header == "") {
-				std::println("Unknown mod id: {}", modification_id);
+				std::cout << std::format("Unknown mod id: {}", modification_id) << '\n';
 				continue;
 			}
 
@@ -149,7 +149,7 @@ void save_modification_table(BinaryWriter& writer, const slk::SLK& slk, const sl
 
 			const auto meta_id2 = slk.field_to_meta_id(meta_slk, property_id, id);
 			if (!meta_id2) {
-				std::println("Meta data key not found for id {} property {}", id, property_id);
+				std::cout << std::format("Meta data key not found for id {} property {}", id, property_id) << '\n';
 				exit(0);
 			}
 			const std::string meta_data_key = std::string(meta_id2.value());

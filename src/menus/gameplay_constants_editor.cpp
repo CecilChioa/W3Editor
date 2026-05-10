@@ -1,6 +1,5 @@
 #include "gameplay_constants_editor.h"
 
-import std;
 import MapGlobal;
 import GameplayConstants;
 import TableModel;
@@ -63,3 +62,5 @@ GameplayConstantsEditor::GameplayConstantsEditor(QWidget* parent) : QDialog(pare
 		}
 	});
 }
+
+#include "moc_gameplay_constants_editor.cpp"

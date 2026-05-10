@@ -45,8 +45,13 @@ export class SkeletalModelInstance {
 	std::vector<std::string> required_animation_names;
 
 	SkeletalModelInstance() = default;
-	explicit SkeletalModelInstance(const std::shared_ptr<mdx::MDX>& model, std::vector<std::string> &&required_animation_names = {})
-		: model(model), required_animation_names(required_animation_names) {
+	explicit SkeletalModelInstance(const std::shared_ptr<mdx::MDX>& model, std::vector<std::string> &&required_animation_names = {}) {
+		reset(model, std::move(required_animation_names));
+	}
+
+	void reset(const std::shared_ptr<mdx::MDX>& model, std::vector<std::string> &&required_animation_names = {}) {
+		this->model = model;
+		this->required_animation_names = std::move(required_animation_names);
 		const size_t node_count = model->bones.size() +
 							model->lights.size() +
 							model->help_bones.size() +

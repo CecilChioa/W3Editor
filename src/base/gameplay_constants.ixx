@@ -38,7 +38,7 @@ export class GameplayConstants {
 		for (const auto& [key, values] : defaults.ini_data["Misc"]) {
 			const auto lowercase_key = to_lowercase_copy(key);
 			if (!metadata.meta_map.contains(lowercase_key)) {
-				std::println("Warning: Gameplay meta data doesn't contain the {} column", key);
+				std::cout << std::format("Warning: Gameplay meta data doesn't contain the {} column", key) << '\n';
 			}
 
 			data.add_column( lowercase_key);
@@ -52,7 +52,7 @@ export class GameplayConstants {
 			for (const auto& [key, values] : overrides.ini_data.at("Misc")) {
 				const auto lowercase_key = to_lowercase_copy(key);
 				if (!metadata.meta_map.contains(lowercase_key)) {
-					std::println("Warning: Gameplay meta data doesn't contain the {} column", key);
+					std::cout << std::format("Warning: Gameplay meta data doesn't contain the {} column", key) << '\n';
 				}
 
 				data.set_shadow_data(lowercase_key, constants_row_key, absl::StrJoin(values, ","));

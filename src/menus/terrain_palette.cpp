@@ -1,9 +1,12 @@
 #include "terrain_palette.h"
 #include "terrain_operators.h"
 
+#include <iterator>
+#include <ranges>
+#include <string_view>
+
 import MapGlobal;
 
-import std;
 import SLK;
 import Texture;
 import OpenGLUtilities;
@@ -594,3 +597,5 @@ TerrainPalette::terrain_button(const QIcon& icon, const char* propertyName, cons
 	button->setToolTip(tileName);
 	return button;
 }
+
+#include "moc_terrain_palette.cpp"

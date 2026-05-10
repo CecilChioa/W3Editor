@@ -56,3 +56,5 @@ void Minimap::mouseMoveEvent(QMouseEvent* event) {
 		}
 	}
 }
+
+#include "moc_minimap.cpp"

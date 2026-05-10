@@ -1,4 +1,5 @@
 #include "doodad_brush.h"
+#include "glwidget.h"
 
 #include <QKeyEvent>
 
@@ -139,7 +140,8 @@ void DoodadBrush::key_press_event(QKeyEvent* event) {
 			y_displacement = -0.5f * up + 0.5f * down;
 		}
 
-		const QRect pre_action_area = map->doodads.get_pathing_bounding_box(selections);
+		const std::vector<Doodad*> selected_doodads(selections.begin(), selections.end());
+		const QRect pre_action_area = map->doodads.get_pathing_bounding_box(selected_doodads);
 		for (const auto& i : selections) {
 			i->position.x += x_displacement;
 			i->position.y += y_displacement;
@@ -305,7 +307,8 @@ void DoodadBrush::mouse_move_event(QMouseEvent* event, double frame_delta) {
 				}
 				drag_start = input_handler.mouse_world;
 
-				const QRect pre_action_area = map->doodads.get_pathing_bounding_box(selections);
+				const std::vector<Doodad*> selected_doodads(selections.begin(), selections.end());
+				const QRect pre_action_area = map->doodads.get_pathing_bounding_box(selected_doodads);
 				for (const auto& doodad : selections) {
 					doodad->position += offset;
 					if (!lock_doodad_z) {
@@ -320,7 +323,8 @@ void DoodadBrush::mouse_move_event(QMouseEvent* event, double frame_delta) {
 					start_action(Action::rotate);
 				}
 
-				const QRect pre_action_area = map->doodads.get_pathing_bounding_box(selections);
+				const std::vector<Doodad*> selected_doodads(selections.begin(), selections.end());
+				const QRect pre_action_area = map->doodads.get_pathing_bounding_box(selected_doodads);
 				for (auto&& i : selections) {
 					float target_rotation =
 						std::atan2(input_handler.mouse_world.y - i->position.y, input_handler.mouse_world.x - i->position.x);
@@ -377,7 +381,8 @@ void DoodadBrush::delete_selection() {
 	map->world_undo.new_undo_group();
 	map->world_undo.add_undo_action(std::move(action));
 
-	const QRect pre_action_area = map->doodads.get_pathing_bounding_box(selections);
+	const std::vector<Doodad*> selected_doodads(selections.begin(), selections.end());
+	const QRect pre_action_area = map->doodads.get_pathing_bounding_box(selected_doodads);
 	map->doodads.remove_doodads(selections);
 	map->doodads.update_doodad_pathing(pre_action_area, map->pathing_map);
 
@@ -691,7 +696,8 @@ void DoodadBrush::set_selection_angle(const float angle) {
 		i->position = glm::vec3(Doodad::acceptable_position(i->position, i->pathing, i->angle), i->position.z);
 		i->update(map->terrain);
 	}
-	map->doodads.update_doodad_pathing(selections, map->pathing_map);
+	std::vector<Doodad*> selected_doodads(selections.begin(), selections.end());
+	map->doodads.update_doodad_pathing(selected_doodads, map->pathing_map);
 	end_action();
 }
 
@@ -737,3 +743,5 @@ void DoodadBrush::unselect_id(const std::string_view id) {
 		set_doodad("ATtr");
 	}
 }
+
+#include "moc_doodad_brush.cpp"

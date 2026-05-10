@@ -143,3 +143,5 @@ void PathingPalette::deactivate(QRibbonTab* tab) {
 		selection_mode->disableShortcuts();
 	}
 }
+
+#include "moc_pathing_palette.cpp"

@@ -34,9 +34,9 @@ export void profile_print() {
 	const double casc_ms = profile_casc_ns.load() / 1'000'000.0;
 	const double parse_ms = profile_parse_ns.load() / 1'000'000.0;
 	const double gl_ms = profile_gl_ns.load() / 1'000'000.0;
-	std::println("  CASC I/O:  {:>7.1f}ms", casc_ms);
-	std::println("  Parsing:   {:>7.1f}ms", parse_ms);
-	std::println("  GL upload: {:>7.1f}ms", gl_ms);
+	std::cout << std::format("  CASC I/O:  {:>7.1f}ms\n", casc_ms);
+	std::cout << std::format("  Parsing:   {:>7.1f}ms\n", parse_ms);
+	std::cout << std::format("  GL upload: {:>7.1f}ms\n", gl_ms);
 }
 
 // RAII helper: measures duration of its scope and adds it to the given accumulator

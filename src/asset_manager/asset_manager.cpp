@@ -1,5 +1,12 @@
 #include "asset_manager.h"
 
+#include <cctype>
+#include <filesystem>
+#include <ranges>
+#include <string>
+#include <string_view>
+#include <system_error>
+
 #include <QApplication>
 #include <QSizePolicy>
 #include <QFileIconProvider>
@@ -10,7 +17,6 @@
 #include <QStyle>
 #include <QVBoxLayout>
 
-import std;
 import SLK;
 import Map;
 import MapGlobal;
@@ -19,7 +25,7 @@ import TableModel;
 import ResourceManager;
 import QIconResource;
 import WindowHandler;
-import "object_editor/object_editor.h";
+#include "object_editor/object_editor.h"
 
 namespace fs = std::filesystem;
 
@@ -417,3 +423,5 @@ void AssetManager::show_context_menu(const QPoint& pos) {
 		menu.exec(tree_view->viewport()->mapToGlobal(pos));
 	}
 }
+
+#include "moc_asset_manager.cpp"

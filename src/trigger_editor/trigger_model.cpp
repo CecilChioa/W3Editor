@@ -1,11 +1,12 @@
-#include <trigger_model.h>
+#include <set>
 
 #include <QStringList>
 #include <QFileIconProvider>
 #include <QPainter>
 #include <QMessageBox>
 #include <QStack>
-#include <set>
+
+#include <trigger_model.h>
 
 import MapGlobal;
 import OpenGLUtilities;

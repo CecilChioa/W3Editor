@@ -1,11 +1,11 @@
 module;
 
-#include "main_window/glwidget.h"
-
 export module Globals;
 
 import INI;
 import SLK;
+
+export class GLWidget;
 
 export inline ini::INI world_edit_strings;
 export inline ini::INI world_edit_game_strings;

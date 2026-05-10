@@ -7,7 +7,7 @@
   },
   "name": "w3editor",
   "version": "0.7.0",
-  "builtin-baseline": "188e85422b2a7713b46f33a2be6ce464db3c2bcd",
+  "builtin-baseline": "12dcccadfe573d0eaa6c67a968413ded7805d256",
   "dependencies": [
     "abseil",
     "bullet3",
@@ -48,10 +48,12 @@
     },
     "soil2",
     "stormlib",
-    "tbb",
+    {
+      "name": "tbb",
+      "default-features": false
+    },
     "unordered-dense",
     "qscintilla",
     "tracy"
   ]
 }
-

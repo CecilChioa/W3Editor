@@ -31,7 +31,7 @@ export class InputHandler {
 	}
 };
 
-export inline InputHandler input_handler;
+export extern InputHandler input_handler;
 
 export struct Camera {
 	glm::vec3 position = {0, 0, 0};
@@ -219,4 +219,4 @@ export struct Camera {
 	}
 };
 
-export inline Camera camera;
+export extern Camera camera;

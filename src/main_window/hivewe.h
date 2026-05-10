@@ -10,8 +10,9 @@
 #include <QMenu>
 #include <QPainter>
 #include <QKeyEvent>
+#include <QAbstractButton>
+#include <QElapsedTimer>
 
-#include "ui_HiveWE.h"
 #include "global_search.h"
 
 import QRibbon;
@@ -19,8 +20,9 @@ import WindowHandler;
 import <glm/glm.hpp>;
 import <glm/gtc/matrix_transform.hpp>;
 import <glm/gtc/quaternion.hpp>;
-import "palette.h";
-import "minimap.h";
+#include "palette.h"
+#include "minimap.h"
+#include "ui_HiveWE.h"
 
 class HiveWE : public QMainWindow {
 	Q_OBJECT
@@ -28,12 +30,35 @@ class HiveWE : public QMainWindow {
 public:
 	explicit HiveWE(QWidget* parent = nullptr);
 
+public slots:
 	void load_folder();
 	void load_mpq();
 	void save();
 	void save_as();
 	void export_mpq();
 	void play_test();
+
+private slots:
+	void do_undo();
+	void do_redo();
+	void reset_camera_view();
+	void open_settings_editor();
+	void open_change_tileset();
+	void open_change_tile_pathing();
+	void open_map_description_editor();
+	void open_map_loading_screen_editor();
+	void open_map_options_editor();
+	void open_terrain_palette();
+	void open_doodad_palette();
+	void open_unit_palette();
+	void open_pathing_palette();
+	void open_trigger_editor();
+	void open_object_editor();
+	void open_model_editor();
+	void open_gameplay_constants_editor();
+	void open_asset_manager_window();
+	void switch_warcraft();
+	void import_heightmap();
 
 private:
 	Ui::HiveWEClass ui;
@@ -59,8 +84,6 @@ private:
 	void resizeEvent(QResizeEvent* event) override;
 	void moveEvent(QMoveEvent* event) override;
 
-	void switch_warcraft();
-	void import_heightmap();
 	void save_window_state();
 	void restore_window_state();
 

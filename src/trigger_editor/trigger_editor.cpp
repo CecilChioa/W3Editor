@@ -1,4 +1,5 @@
-#include "trigger_editor.h"
+#include <functional>
+#include <ranges>
 
 #include <QPlainTextEdit>
 #include <QSettings>
@@ -10,14 +11,15 @@
 #include <QPushButton>
 #include <QFileIconProvider>
 #include <QTreeWidget>
+#include <QShortcut>
 
-#include "HiveWE.h"
+#include "trigger_editor.h"
+
 #include "jass_editor.h"
 #include "search_window.h"
 #include "variable_editor.h"
 #include "trigger_model.h"
 
-import std;
 import Utilities;
 import Triggers;
 import Globals;

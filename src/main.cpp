@@ -3,6 +3,14 @@
 
 #define QT_NO_OPENGL
 
+#include <exception>
+#include <filesystem>
+#include <format>
+#include <fstream>
+#include <future>
+#include <iostream>
+#include <string_view>
+
 #include <QApplication>
 #include <QCoreApplication>
 #include <QFile>
@@ -25,7 +33,6 @@ __declspec(dllexport) unsigned long NvOptimusEnablement = 1;
 
 #include <tracy/Tracy.hpp>
 
-import std;
 import Map;
 import Timer;
 import MapGlobal;
@@ -159,8 +166,7 @@ int main(int argc, char* argv[]) {
 	casc_future.wait();
 	trace("casc future finished");
 
-	std::println("Application start: {}ms", start_timer.elapsed_ms());
-
+	std::cout << std::format("Application start: {}ms", start_timer.elapsed_ms()) << '\n';
 	trace("test map load begin");
 	try {
 		map->load("data/test map/");

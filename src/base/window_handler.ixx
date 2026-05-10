@@ -41,6 +41,6 @@ export class WindowHandler : public QObject {
 	}
 };
 
-export inline WindowHandler window_handler;
+export extern WindowHandler window_handler;
 
 #include "window_handler.moc"

@@ -7,6 +7,7 @@ module;
 export module Units;
 
 import std;
+import types;
 import GLThreadPool;
 import Utilities;
 import SkinnedMesh;
@@ -478,7 +479,7 @@ export class Units {
 
 		auto result = resource_manager.load<SkinnedMesh>(mesh_path, "", std::nullopt);
 		if (!result) {
-			std::println("Missing model file for {} with file path: {} ({})", id, mesh_path.string(), result.error());
+			std::cout << std::format("Missing model file for {} with file path: {} ({})", id, mesh_path.string(), result.error()) << '\n';
 			result = resource_manager.load<SkinnedMesh>("Objects/Invalidmodel/Invalidmodel.mdx", "", std::nullopt);
 		}
 

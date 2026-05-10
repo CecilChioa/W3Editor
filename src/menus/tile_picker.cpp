@@ -69,3 +69,5 @@ void TilePicker::completed() {
 	emit tile_chosen(from_tile, to_tile);
 	close();
 }
+
+#include "moc_tile_picker.cpp"

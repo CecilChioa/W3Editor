@@ -39,7 +39,7 @@ export class Shapes {
 	};
 };
 
-export inline Shapes shapes;
+export extern Shapes shapes;
 
 /// Convert a Tground texture into an QIcon with two states
 export QIcon ground_texture_to_icon(uint8_t* data, const int width, const int height) {

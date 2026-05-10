@@ -544,3 +544,5 @@ void MapInfoEditor::adjustBounds(int deltaLeft, int deltaRight, int deltaTop, in
 
 	updateMapSizeGUI();
 }
+
+#include "moc_map_info_editor.cpp"

@@ -1,7 +1,10 @@
+#include <algorithm>
+#include <cmath>
+#include <vector>
+
 #include "terrain_brush.h"
 #include "terrain_operators.h"
 
-import std;
 import MapGlobal;
 import Terrain;
 import DoodadsUndo;
@@ -132,15 +135,15 @@ QRect HeightOperator::apply(const QRect& area, double frame_delta) {
 	return modified_area;
 }
 
-void HeightOperator::apply_end(WorldEditContext& ctx, const QRect& area) {
+void HeightOperator::apply_end(const QRect& area) {
 	QRect area_terrain = TerrainBrush::from_pathing_rect(area);
 
 	if (brush->deform_ground) {
-		brush->add_terrain_undo(ctx, area_terrain, TerrainUndoType::height);
+		brush->add_terrain_undo(area_terrain, TerrainUndoType::height);
 	}
 
 	if (brush->deform_water) {
-		brush->add_terrain_undo(ctx, area_terrain, TerrainUndoType::water);
+		brush->add_terrain_undo(area_terrain, TerrainUndoType::water);
 	}
 }
 
@@ -196,9 +199,9 @@ QRect TextureOperator::apply(const QRect& area, double frame_delta) {
 	return modified_area;
 }
 
-void TextureOperator::apply_end(WorldEditContext& ctx, const QRect& area) {
+void TextureOperator::apply_end(const QRect& area) {
 	const QRect area_terrain = TerrainBrush::from_pathing_rect(area);
-	brush->add_terrain_undo(ctx, area_terrain, TerrainUndoType::texture);
+	brush->add_terrain_undo(area_terrain, TerrainUndoType::texture);
 }
 
 void CliffOperator::apply_begin(const QRect& area, int center_x, int center_y) {
@@ -373,8 +376,8 @@ QRect CliffOperator::apply(const QRect& area, double frame_delta) {
 	}
 }
 
-void CliffOperator::apply_end(WorldEditContext& ctx, const QRect& area) {
-	brush->add_terrain_undo(ctx, TerrainBrush::from_pathing_rect(area), TerrainUndoType::cliff);
+void CliffOperator::apply_end(const QRect& area) {
+	brush->add_terrain_undo(TerrainBrush::from_pathing_rect(area), TerrainUndoType::cliff);
 }
 
 /// Make this an iterative function instead to avoid stack overflows
@@ -621,15 +624,15 @@ QRect CellOperator::apply(const QRect& area, double frame_delta) {
 	return modified_area;
 }
 
-void CellOperator::apply_end(WorldEditContext& ctx, const QRect& area) {
+void CellOperator::apply_end(const QRect& area) {
 	QRect area_terrain = TerrainBrush::from_pathing_rect(area);
 
 	if (cell_operation_type == cell_operation::remove_water || cell_operation_type == cell_operation::add_water) {
-		brush->add_terrain_undo(ctx, area_terrain, TerrainUndoType::water);
+		brush->add_terrain_undo(area_terrain, TerrainUndoType::water);
 	} else if (cell_operation_type == cell_operation::add_boundary || cell_operation_type == cell_operation::remove_boundary) {
-		brush->add_terrain_undo(ctx, area_terrain, TerrainUndoType::texture);
+		brush->add_terrain_undo(area_terrain, TerrainUndoType::texture);
 	} else if (cell_operation_type == cell_operation::add_hole || cell_operation_type == cell_operation::remove_hole) {
-		brush->add_terrain_undo(ctx, area_terrain, TerrainUndoType::cliff);
+		brush->add_terrain_undo(area_terrain, TerrainUndoType::cliff);
 	}
 }
 

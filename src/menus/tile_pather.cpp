@@ -1,6 +1,8 @@
 #include "tile_pather.h"
 
-import std;
+#include <algorithm>
+#include <string_view>
+
 import OpenGLUtilities;
 import Texture;
 import MapGlobal;
@@ -145,3 +147,5 @@ void TilePather::save_tiles() {
 
 	close();
 }
+
+#include "moc_tile_pather.cpp"

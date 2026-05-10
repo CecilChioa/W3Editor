@@ -1,6 +1,21 @@
+module;
+
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <format>
+#include <iterator>
+#include <print>
+#include <ranges>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include <variant>
+#include <vector>
+
 export module Triggers;
 
-import std;
 import Hierarchy;
 import Utilities;
 import Globals;
@@ -16,7 +31,6 @@ import BinaryReader;
 import BinaryWriter;
 import INI;
 
-namespace fs = std::filesystem;
 using namespace std::literals::string_literals;
 
 export enum class ScriptMode {
@@ -576,7 +590,7 @@ export class Triggers {
 
 		const std::string magic_number = reader.read_string(4);
 		if (magic_number != "WTG!") {
-			std::println("Unknown magic number for war3map.wtg {}", magic_number);
+			std::cout << std::format("Unknown magic number for war3map.wtg {}", magic_number) << '\n';
 			return;
 		}
 
@@ -586,7 +600,7 @@ export class Triggers {
 		else if (version == 4 || version == 7)
 			load_version_pre31(reader, version);
 		else {
-			std::println("Unknown WTG format! Trying 1.31 loader");
+			std::cout << std::format("Unknown WTG format! Trying 1.31 loader") << '\n';
 			load_version_31(reader, version);
 		}
 	}

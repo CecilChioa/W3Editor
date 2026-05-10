@@ -355,7 +355,7 @@ export class Map: public QObject {
 		upgrade_table = new TableModel(&upgrade_slk, &upgrade_meta_slk, &trigger_strings);
 		buff_table = new TableModel(&buff_slk, &buff_meta_slk, &trigger_strings);
 
-		std::println("\nSLK loading:\t {:>5}ms", timer.elapsed_ms());
+		std::cout << std::format("\nSLK loading:\t {:>5}ms", timer.elapsed_ms()) << '\n';
 		timer.reset();
 
 		// Trigger strings
@@ -373,7 +373,7 @@ export class Map: public QObject {
 			}
 		}
 
-		std::println("Trigger loading: {:>5}ms", timer.elapsed_ms());
+		std::cout << std::format("Trigger loading: {:>5}ms", timer.elapsed_ms()) << '\n';
 		timer.reset();
 
 		gameplay_constants.load();
@@ -382,7 +382,7 @@ export class Map: public QObject {
 		profile_reset();
 		terrain.load(physics);
 
-		std::println("Terrain loading: {:>5}ms", timer.elapsed_ms());
+		std::cout << std::format("Terrain loading: {:>5}ms", timer.elapsed_ms()) << '\n';
 		profile_print();
 		timer.reset();
 
@@ -393,7 +393,7 @@ export class Map: public QObject {
 			pathing_map.resize(terrain.width * 4, terrain.height * 4);
 		}
 
-		std::println("Pathing loading: {:>5}ms", timer.elapsed_ms());
+		std::cout << std::format("Pathing loading: {:>5}ms", timer.elapsed_ms()) << '\n';
 		timer.reset();
 
 		// Doodads
@@ -418,7 +418,7 @@ export class Map: public QObject {
 		doodads.create(terrain, pathing_map);
 		glFinish(); // Ensure all GL work submitted on worker contexts is visible to the main context
 
-		std::println("Doodad loading:\t {:>5}ms", timer.elapsed_ms());
+		std::cout << std::format("Doodad loading:\t {:>5}ms", timer.elapsed_ms()) << '\n';
 		profile_print();
 		timer.reset();
 
@@ -446,7 +446,7 @@ export class Map: public QObject {
 			glFinish(); // Ensure all GL work submitted on worker contexts is visible to the main context
 		}
 
-		std::println("Unit loading:\t {:>5}ms", timer.elapsed_ms());
+		std::cout << std::format("Unit loading:\t {:>5}ms", timer.elapsed_ms()) << '\n';
 		profile_print();
 		timer.reset();
 
@@ -492,7 +492,7 @@ export class Map: public QObject {
 			sounds.load();
 		}
 
-		std::println("Misc loading:\t {:>5}ms", timer.elapsed_ms());
+		std::cout << std::format("Misc loading:\t {:>5}ms", timer.elapsed_ms()) << '\n';
 		timer.reset();
 
 		// Shadow map
@@ -502,11 +502,10 @@ export class Map: public QObject {
 			shadow_map.resize((terrain.width - 1) * 4, (terrain.height - 1) * 4);
 		}
 
-		std::println("Shadows loading: {:>5}ms", timer.elapsed_ms());
+		std::cout << std::format("Shadows loading: {:>5}ms", timer.elapsed_ms()) << '\n';
 		timer.reset();
 
-		std::println("Full loading: {:>5}ms", full_timer.elapsed_ms());
-
+		std::cout << std::format("Full loading: {:>5}ms", full_timer.elapsed_ms()) << '\n';
 		// Center camera
 		camera.position = glm::vec3(terrain.width / 2, terrain.height / 2, 0);
 		camera.position.z = terrain.interpolated_height(camera.position.x, camera.position.y, true);
@@ -664,8 +663,7 @@ export class Map: public QObject {
 
 		imports.save(filesystem_path);
 
-		std::println("Saving took: {:>5}ms", timer.elapsed_ms());
-
+		std::cout << std::format("Saving took: {:>5}ms", timer.elapsed_ms()) << '\n';
 		return true;
 	}
 

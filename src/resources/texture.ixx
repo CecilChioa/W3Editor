@@ -89,7 +89,7 @@ export class Texture : public Resource {
 
 		BinaryReader reader = std::move(loaded)
 			.or_else([&](const std::string&) {
-				std::println("Error loading texture {}", loaded_path.string());
+				std::cout << std::format("Error loading texture {}", loaded_path.string()) << '\n';
 				loaded_path = "Textures/btntempw.dds";
 				return hierarchy.open_file(loaded_path);
 			})

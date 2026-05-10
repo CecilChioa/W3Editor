@@ -523,7 +523,7 @@ static void write_item_table_entry(MapScriptWriter& script, int chance, const st
 				item_type = "ANY";
 				break;
 			default:
-				std::println("Error: unknown random item type {}", id[1]);
+				std::cout << std::format("Error: unknown random item type {}", id[1]) << '\n';
 		}
 
 		const std::string random_item =

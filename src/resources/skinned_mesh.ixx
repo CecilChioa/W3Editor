@@ -93,6 +93,10 @@ export class SkinnedMesh: public Resource {
 	std::vector<glm::mat4> instance_bone_matrices;
 	std::vector<glm::vec4> layer_colors;
 
+	void reset_skeleton(SkeletalModelInstance& skeleton) const {
+		skeleton.reset(mdx);
+	}
+
 	static constexpr const char* name = "SkinnedMesh";
 
 	explicit SkinnedMesh(const fs::path& path, std::optional<std::pair<int, std::string>> replaceable_id_override) {

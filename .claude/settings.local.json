@@ -15,7 +15,7 @@
       "Bash(powershell.exe *)",
       "Bash(python *)",
       "Bash(\"C:/war3/mytool/W3Editor/build/Debug/W3Editor.exe\" --close)",
-      "Bash(/c/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe *)",
+      "Bash(/c/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe *)",
       "Bash(build/Debug/W3Editor.exe *)"
     ]
   }

@@ -1,13 +1,21 @@
+#include <algorithm>
+#include <array>
+#include <memory>
+#include <ranges>
+#include <typeindex>
+#include <typeinfo>
+#include <utility>
+
 #include "terrain_brush.h"
 #include "terrain_operators.h"
 
-import std;
 import MapGlobal;
 import Terrain;
 import DoodadsUndo;
 import PathingUndo;
 import TerrainUndo;
 import Camera;
+import WorldUndoManager;
 
 TerrainBrush::TerrainBrush() :
 	Brush(),
@@ -242,18 +250,10 @@ void TerrainBrush::apply_end() {
 		return;
 	}
 
-	WorldEditContext ctx {
-		.terrain = map->terrain,
-		.units = map->units,
-		.doodads = map->doodads,
-		.brush = this,
-		.pathing_map = map->pathing_map,
-	};
-
 	// apply all active operators
 	for (TerrainOperator& op : terrain_operators) {
 		if (op.is_active) {
-			op.apply_end(ctx, updated_area);
+			op.apply_end(updated_area);
 		}
 	}
 
@@ -268,13 +268,13 @@ void TerrainBrush::apply_end() {
 		map->world_undo.add_undo_action(std::move(undo));
 	}
 
-	add_pathing_undo(ctx, updated_area);
+	add_pathing_undo(updated_area);
 
 	map->terrain.update_minimap();
 }
 
 /// Adds the undo to the current undo group
-void TerrainBrush::add_terrain_undo(WorldEditContext& ctx, const QRect& area, TerrainUndoType type) {
+void TerrainBrush::add_terrain_undo(const QRect& area, TerrainUndoType type) {
 	auto undo_action = std::make_unique<TerrainGenericAction>();
 
 	undo_action->area = area;
@@ -292,18 +292,18 @@ void TerrainBrush::add_terrain_undo(WorldEditContext& ctx, const QRect& area, Te
 	undo_action->new_corners.reserve(area.width() * area.height());
 	for (int j = area.top(); j <= area.bottom(); j++) {
 		for (int i = area.left(); i <= area.right(); i++) {
-			undo_action->new_corners.push_back(ctx.terrain.get_corner(i, j));
+			undo_action->new_corners.push_back(map->terrain.get_corner(i, j));
 		}
 	}
 
 	map->world_undo.add_undo_action(std::move(undo_action));
 }
 
-void TerrainBrush::add_pathing_undo(WorldEditContext& ctx, const QRect& area) {
+void TerrainBrush::add_pathing_undo(const QRect& area) {
 	auto undo_action = std::make_unique<PathingMapAction>();
 
 	undo_action->area = area;
-	const auto width = ctx.pathing_map.width;
+	const auto width = map->pathing_map.width;
 
 	// Copy old corners
 	undo_action->old_pathing.reserve(area.width() * area.height());
@@ -317,7 +317,7 @@ void TerrainBrush::add_pathing_undo(WorldEditContext& ctx, const QRect& area) {
 	undo_action->new_pathing.reserve(area.width() * area.height());
 	for (int j = area.top(); j <= area.bottom(); j++) {
 		for (int i = area.left(); i <= area.right(); i++) {
-			undo_action->new_pathing.push_back(ctx.pathing_map.pathing_cells_static[j * width + i]);
+			undo_action->new_pathing.push_back(map->pathing_map.pathing_cells_static[j * width + i]);
 		}
 	}
 

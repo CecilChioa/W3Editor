@@ -228,3 +228,5 @@ void TileSetter::save_tiles() {
 	map->terrain.change_tileset(to_ids, from_to_id);
 	close();
 }
+
+#include "moc_tile_setter.cpp"

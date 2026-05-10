@@ -46,8 +46,8 @@ class TerrainBrush: public Brush {
 	void apply(double frame_delta) override;
 	void apply_end() override;
 
-	void add_terrain_undo(WorldEditContext& ctx, const QRect& area, TerrainUndoType type);
-	void add_pathing_undo(WorldEditContext& ctx, const QRect& area);
+	void add_terrain_undo(const QRect& area, TerrainUndoType type);
+	void add_pathing_undo(const QRect& area);
 
 	// all terrain operators
 	CliffOperator cliff_operator;

@@ -1,11 +1,9 @@
-target_sources(W3EditorHive PUBLIC FILE_SET yeet TYPE CXX_MODULES FILES
+target_sources(W3Editor PUBLIC FILE_SET yeet TYPE CXX_MODULES FILES
 	"types.ixx"
 	"map_global.ixx"
 	"globals.ixx"
 
 	"base/map/map.ixx"
-	"base/map/resize.cpp"
-	"base/map/unused_files.cpp"
 	"base/binary_reader.ixx"
 	"base/doodad.ixx"
 	"base/doodads.ixx"
@@ -34,8 +32,6 @@ target_sources(W3EditorHive PUBLIC FILE_SET yeet TYPE CXX_MODULES FILES
 	"base/terrain.ixx"
 
 	"base/triggers/triggers.ixx"
-	"base/triggers/gui.cpp"
-	"base/triggers/map_script.cpp"
 
 	"file_formats/blp.ixx"
 	"file_formats/casc.ixx"
@@ -102,8 +98,21 @@ target_sources(W3EditorHive PUBLIC FILE_SET yeet TYPE CXX_MODULES FILES
 	"object_editor/ability_list_editor.ixx"
 )
 
-target_sources(W3EditorHive PRIVATE
+target_sources(W3Editor PRIVATE
 	"main.cpp"
+	"base/hierarchy.cpp"
+	"base/camera.cpp"
+	"base/window_handler.cpp"
+	"base/resource_manager.cpp"
+	"utilities/gl_thread_pool.cpp"
+	"utilities/opengl_utilities.cpp"
+	"base/map/resize.cpp"
+	"base/map/unused_files.cpp"
+	"base/doodad.cpp"
+	"base/doodads.cpp"
+	"base/render_manager.cpp"
+	"base/triggers/gui.cpp"
+	"base/triggers/map_script.cpp"
 
 	"main_window/hivewe.rc"
 	"main_window/hivewe.cpp"	

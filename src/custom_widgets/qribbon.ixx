@@ -33,6 +33,10 @@ export class QRibbonButton : public QToolButton {
 
 	std::vector<QShortcut*> shortcuts;
 
+	void setChecked(bool checked) {
+		QToolButton::setChecked(checked);
+	}
+
 	void setShortCut(const QKeySequence sequence, const std::vector<QWidget*>& attach_to) {
 		for (auto&& i : attach_to) {
 			shortcuts.push_back(new QShortcut(sequence, i));

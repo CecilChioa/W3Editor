@@ -533,8 +533,7 @@ namespace mdx {
 			}
 			reader.tokens.emplace_back(mdl.substr(0, pos));
 
-			std::println("{}", mdl.substr(0, pos));
-
+			std::cout << std::format("{}", mdl.substr(0, pos)) << '\n';
 			pos = mdl.find_first_not_of(" \t\r\n,", pos);
 			if (pos == std::string::npos) {
 				break;

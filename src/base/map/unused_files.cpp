@@ -76,12 +76,12 @@ std::vector<FileUsage> Map::get_file_usage() const {
 		try {
 			auto mdx_content = hierarchy.open_file(path);
 			if (!mdx_content) {
-				std::println("Error loading mdx: {} with error: {}", path, mdx_content.error());
+				std::cout << std::format("Error loading mdx: {} with error: {}", path, mdx_content.error()) << '\n';
 				return;
 			}
 			mdx = mdx::MDX(mdx_content.value());
 		} catch (const std::exception& e) {
-			std::println("Exception loading mdx: {} with error: {}", path, e.what());
+			std::cout << std::format("Exception loading mdx: {} with error: {}", path, e.what()) << '\n';
 			return;
 		}
 
@@ -133,7 +133,7 @@ std::vector<FileUsage> Map::get_file_usage() const {
 	const auto binary = read_file(filesystem_path / script_file_name);
 	std::string map_script;
 	if (!binary) {
-		std::println("Error reading map script. Save your map first.");
+		std::cout << std::format("Error reading map script. Save your map first.") << '\n';
 	} else {
 		const auto a = binary.value();
 		map_script = std::string(a.buffer.begin(), a.buffer.end());

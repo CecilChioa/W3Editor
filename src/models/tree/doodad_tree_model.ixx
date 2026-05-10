@@ -28,7 +28,7 @@ export class DoodadTreeModel : public BaseTreeModel {
 		const std::string_view category = doodads_slk.data<std::string_view>("category", id);
 
 		if (category.empty()) {
-			std::println("Doodad with id: {} has no category set. Set a category!", id);
+			std::cout << std::format("Doodad with id: {} has no category set. Set a category!", id) << '\n';
 			return categories.begin()->second.item;
 		}
 

@@ -14,7 +14,7 @@ import "glad/glad.h";
 export class GLThreadPool {
 	std::mutex mutex;
 	std::condition_variable cv;
-	std::queue<std::move_only_function<void()>> tasks;
+	std::queue<std::function<void()>> tasks;
 	std::atomic<bool> stopping {false};
 
 	std::vector<QThread*> worker_threads;
@@ -23,12 +23,12 @@ export class GLThreadPool {
 
 	void work_loop(QOpenGLContext* ctx, QOffscreenSurface* surface) {
 		if (!ctx->makeCurrent(surface)) {
-			std::println("GLThreadPool: failed to make context current on worker thread");
+			std::cerr << "GLThreadPool: failed to make context current on worker thread\n";
 			return;
 		}
 
 		while (true) {
-			std::move_only_function<void()> task;
+			std::function<void()> task;
 			{
 				std::unique_lock lock(mutex);
 				cv.wait(lock, [&] {
@@ -57,7 +57,7 @@ export class GLThreadPool {
 
 		QOpenGLContext* global_ctx = QOpenGLContext::globalShareContext();
 		if (!global_ctx) {
-			std::println("GLThreadPool: globalShareContext is null — parallel loading disabled");
+			std::cerr << "GLThreadPool: globalShareContext is null — parallel loading disabled\n";
 			return;
 		}
 
@@ -75,7 +75,7 @@ export class GLThreadPool {
 			ctx->setFormat(fmt);
 			ctx->setShareContext(global_ctx);
 			if (!ctx->create()) {
-				std::println("GLThreadPool: failed to create shared GL context");
+				std::cerr << "GLThreadPool: failed to create shared GL context\n";
 				surfaces.pop_back();
 				delete surface;
 				delete ctx;
@@ -139,4 +139,4 @@ export class GLThreadPool {
 	}
 };
 
-export inline GLThreadPool gl_thread_pool;
+export extern GLThreadPool gl_thread_pool;

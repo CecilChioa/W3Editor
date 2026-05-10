@@ -90,7 +90,7 @@ export class GroundTexture : public Resource {
 		fs::path loaded_path;
 		BinaryReader reader = load_texture_reader(path, loaded_path)
 			.or_else([&](const std::string&) {
-				std::println("Error loading texture {}", loaded_path.string());
+				std::cout << std::format("Error loading texture {}", loaded_path.string()) << '\n';
 				loaded_path = "Textures/btntempw.dds";
 				return hierarchy.open_file(loaded_path);
 			})

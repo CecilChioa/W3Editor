@@ -15,4 +15,8 @@ export {
 
 	using f32 = float;
 	using f64 = double;
+
+	struct ItemSet {
+		std::vector<std::pair<int, std::string>> items;
+	};
 }

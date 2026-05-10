@@ -1,8 +1,15 @@
+#include <filesystem>
+#include <format>
+#include <iterator>
+#include <iostream>
+#include <cstring>
+#include <system_error>
+
+#include "settings_editor.h"
 #include "HiveWE.h"
 #define __STORMLIB_NO_STATIC_LINK__
 #include "StormLib.h"
 
-import std;
 import Hierarchy;
 import MPQ;
 import Camera;
@@ -11,26 +18,24 @@ import Map;
 import <soil2/SOIL2.h>;
 import MapGlobal;
 import WorldUndoManager;
-import "pathing_palette.h";
-import "object_editor/object_editor.h";
-import "model_editor/model_editor.h";
-import "tile_setter.h";
-import "map_info_editor.h";
-import "terrain_palette.h";
-import "settings_editor.h";
-import "tile_pather.h";
-import "palette.h";
-import "terrain_palette.h";
-import "doodad_palette.h";
-import "unit_palette.h";
-import "object_editor/icon_view.h";
-import "trigger_editor.h";
+#include "pathing_palette.h"
+#include "object_editor/object_editor.h"
+#include "model_editor/model_editor.h"
+#include "tile_setter.h"
+#include "map_info_editor.h"
+#include "terrain_palette.h"
+#include "tile_pather.h"
+#include "palette.h"
+#include "doodad_palette.h"
+#include "unit_palette.h"
+#include "object_editor/icon_view.h"
+#include "trigger_editor.h"
 #include "QMessageBox"
 #include "QProcess"
 #include "QKeySequence"
 #include "QString"
-import "menus/gameplay_constants_editor.h";
-import "asset_manager/asset_manager.h";
+#include "menus/gameplay_constants_editor.h"
+#include "asset_manager/asset_manager.h"
 
 namespace fs = std::filesystem;
 
@@ -45,61 +50,31 @@ HiveWE::HiveWE(QWidget* parent)
 	ui.setupUi(this);
 	context = ui.widget;
 
-	connect(ui.ribbon->undo, &QPushButton::clicked, [&]() {
-		// ToDo: temporary, undoing should still allow a selection to persist
-		if (map->brush) {
-			map->brush->clear_selection();
-		}
+	connect(ui.ribbon->undo, &QAbstractButton::clicked, this, &HiveWE::do_undo);
+	connect(ui.ribbon->redo, &QAbstractButton::clicked, this, &HiveWE::do_redo);
 
-		auto context = WorldEditContext {
-			.terrain = map->terrain,
-			.units = map->units,
-			.doodads = map->doodads,
-			.brush = map->brush,
-			.pathing_map = map->pathing_map,
-		};
+	connect(new QShortcut(Qt::CTRL | Qt::Key_Z, this), &QShortcut::activated, ui.ribbon->undo, &QAbstractButton::click);
+	connect(new QShortcut(Qt::CTRL | Qt::Key_Y, this), &QShortcut::activated, ui.ribbon->redo, &QAbstractButton::click);
 
-		map->world_undo.undo(context);
-	});
-	connect(ui.ribbon->redo, &QPushButton::clicked, [&]() {
-		// ToDo: temporary, undoing should still allow a selection to persist
-		if (map->brush) {
-			map->brush->clear_selection();
-		}
+	connect(ui.ribbon->units_visible, &QAbstractButton::toggled, [](bool checked) { map->render_units = checked; });
+	connect(ui.ribbon->doodads_visible, &QAbstractButton::toggled, [](bool checked) { map->render_doodads = checked; });
+	connect(ui.ribbon->pathing_visible, &QAbstractButton::toggled, [](bool checked) { map->render_pathing = checked; });
+	connect(ui.ribbon->brush_visible, &QAbstractButton::toggled, [](bool checked) { map->render_brush = checked; });
+	connect(ui.ribbon->lighting_visible, &QAbstractButton::toggled, [](bool checked) { map->render_lighting = checked; });
+	connect(ui.ribbon->water_visible, &QAbstractButton::toggled, [](bool checked) { map->render_water = checked; });
+	connect(ui.ribbon->click_helpers_visible, &QAbstractButton::toggled, [](bool checked) { map->render_click_helpers = checked; });
+	connect(ui.ribbon->wireframe_visible, &QAbstractButton::toggled, [](bool checked) { map->render_wireframe = checked; });
+	connect(ui.ribbon->debug_visible, &QAbstractButton::toggled, [](bool checked) { map->render_debug = checked; });
+	connect(ui.ribbon->minimap_visible, &QAbstractButton::toggled, [&](bool checked) { (checked) ? minimap->show() : minimap->hide(); });
 
-		auto context = WorldEditContext {
-			.terrain = map->terrain,
-			.units = map->units,
-			.doodads = map->doodads,
-			.brush = map->brush,
-			.pathing_map = map->pathing_map,
-		};
-
-		map->world_undo.redo(context);
-	});
-
-	connect(new QShortcut(Qt::CTRL | Qt::Key_Z, this), &QShortcut::activated, ui.ribbon->undo, &QPushButton::click);
-	connect(new QShortcut(Qt::CTRL | Qt::Key_Y, this), &QShortcut::activated, ui.ribbon->redo, &QPushButton::click);
-
-	connect(ui.ribbon->units_visible, &QPushButton::toggled, [](bool checked) { map->render_units = checked; });
-	connect(ui.ribbon->doodads_visible, &QPushButton::toggled, [](bool checked) { map->render_doodads = checked; });
-	connect(ui.ribbon->pathing_visible, &QPushButton::toggled, [](bool checked) { map->render_pathing = checked; });
-	connect(ui.ribbon->brush_visible, &QPushButton::toggled, [](bool checked) { map->render_brush = checked; });
-	connect(ui.ribbon->lighting_visible, &QPushButton::toggled, [](bool checked) { map->render_lighting = checked; });
-	connect(ui.ribbon->water_visible, &QPushButton::toggled, [](bool checked) { map->render_water = checked; });
-	connect(ui.ribbon->click_helpers_visible, &QPushButton::toggled, [](bool checked) { map->render_click_helpers = checked; });
-	connect(ui.ribbon->wireframe_visible, &QPushButton::toggled, [](bool checked) { map->render_wireframe = checked; });
-	connect(ui.ribbon->debug_visible, &QPushButton::toggled, [](bool checked) { map->render_debug = checked; });
-	connect(ui.ribbon->minimap_visible, &QPushButton::toggled, [&](bool checked) { (checked) ? minimap->show() : minimap->hide(); });
-
-	connect(new QShortcut(Qt::CTRL | Qt::Key_U, this), &QShortcut::activated, ui.ribbon->units_visible, &QPushButton::click);
-	connect(new QShortcut(Qt::CTRL | Qt::Key_D, this), &QShortcut::activated, ui.ribbon->doodads_visible, &QPushButton::click);
-	connect(new QShortcut(Qt::CTRL | Qt::Key_P, this), &QShortcut::activated, ui.ribbon->pathing_visible, &QPushButton::click);
-	connect(new QShortcut(Qt::CTRL | Qt::Key_L, this), &QShortcut::activated, ui.ribbon->lighting_visible, &QPushButton::click);
-	connect(new QShortcut(Qt::CTRL | Qt::Key_W, this), &QShortcut::activated, ui.ribbon->water_visible, &QPushButton::click);
-	connect(new QShortcut(Qt::CTRL | Qt::Key_I, this), &QShortcut::activated, ui.ribbon->click_helpers_visible, &QPushButton::click);
-	connect(new QShortcut(Qt::CTRL | Qt::Key_T, this), &QShortcut::activated, ui.ribbon->wireframe_visible, &QPushButton::click);
-	connect(new QShortcut(Qt::Key_F3, this), &QShortcut::activated, ui.ribbon->debug_visible, &QPushButton::click);
+	connect(new QShortcut(Qt::CTRL | Qt::Key_U, this), &QShortcut::activated, ui.ribbon->units_visible, &QAbstractButton::click);
+	connect(new QShortcut(Qt::CTRL | Qt::Key_D, this), &QShortcut::activated, ui.ribbon->doodads_visible, &QAbstractButton::click);
+	connect(new QShortcut(Qt::CTRL | Qt::Key_P, this), &QShortcut::activated, ui.ribbon->pathing_visible, &QAbstractButton::click);
+	connect(new QShortcut(Qt::CTRL | Qt::Key_L, this), &QShortcut::activated, ui.ribbon->lighting_visible, &QAbstractButton::click);
+	connect(new QShortcut(Qt::CTRL | Qt::Key_W, this), &QShortcut::activated, ui.ribbon->water_visible, &QAbstractButton::click);
+	connect(new QShortcut(Qt::CTRL | Qt::Key_I, this), &QShortcut::activated, ui.ribbon->click_helpers_visible, &QAbstractButton::click);
+	connect(new QShortcut(Qt::CTRL | Qt::Key_T, this), &QShortcut::activated, ui.ribbon->wireframe_visible, &QAbstractButton::click);
+	connect(new QShortcut(Qt::Key_F3, this), &QShortcut::activated, ui.ribbon->debug_visible, &QAbstractButton::click);
 
 	// Reload theme
 	connect(new QShortcut(Qt::Key_F5, this), &QShortcut::activated, [&]() {
@@ -107,7 +82,7 @@ HiveWE::HiveWE(QWidget* parent)
 		QFile file("data/themes/" + settings.value("theme").toString() + ".qss");
 		const auto success = file.open(QFile::ReadOnly);
 		if (!success) {
-			std::println("Failed to open theme file");
+			std::cout << std::format("Failed to open theme file") << '\n';
 			return;
 		}
 		QString StyleSheet = QLatin1String(file.readAll());
@@ -115,93 +90,68 @@ HiveWE::HiveWE(QWidget* parent)
 		qApp->setStyleSheet(StyleSheet);
 	});
 
-	connect(ui.ribbon->reset_camera, &QPushButton::clicked, [&]() { camera.reset(); });
-	connect(new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_C), this), &QShortcut::activated, ui.ribbon->reset_camera, &QPushButton::click);
+	connect(ui.ribbon->reset_camera, &QAbstractButton::clicked, this, &HiveWE::reset_camera_view);
+	connect(new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_C), this), &QShortcut::activated, ui.ribbon->reset_camera, &QAbstractButton::click);
 
-	connect(ui.ribbon->import_heightmap, &QPushButton::clicked, this, &HiveWE::import_heightmap);
+	connect(ui.ribbon->import_heightmap, &QAbstractButton::clicked, this, &HiveWE::import_heightmap);
 
-	connect(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_O), this, nullptr, nullptr, Qt::ApplicationShortcut), &QShortcut::activated, ui.ribbon->open_map_folder, &QPushButton::click);
-	// connect(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_I), this, nullptr, nullptr, Qt::ApplicationShortcut), &QShortcut::activated, ui.ribbon->open_map_mpq, &QPushButton::click);
-	connect(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_S), this, nullptr, nullptr, Qt::ApplicationShortcut), &QShortcut::activated, ui.ribbon->save_map, &QPushButton::click);
-	connect(new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S), this, nullptr, nullptr, Qt::ApplicationShortcut), &QShortcut::activated, ui.ribbon->save_map_as, &QPushButton::click);
+	connect(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_O), this, nullptr, nullptr, Qt::ApplicationShortcut), &QShortcut::activated, ui.ribbon->open_map_folder, &QAbstractButton::click);
+	// connect(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_I), this, nullptr, nullptr, Qt::ApplicationShortcut), &QShortcut::activated, ui.ribbon->open_map_mpq, &QAbstractButton::click);
+	connect(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_S), this, nullptr, nullptr, Qt::ApplicationShortcut), &QShortcut::activated, ui.ribbon->save_map, &QAbstractButton::click);
+	connect(new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S), this, nullptr, nullptr, Qt::ApplicationShortcut), &QShortcut::activated, ui.ribbon->save_map_as, &QAbstractButton::click);
 
 	// connect(ui.ribbon->new_map, &QAction::triggered, this, &HiveWE::load);
-	connect(ui.ribbon->open_map_folder, &QPushButton::clicked, this, &HiveWE::load_folder);
-	connect(ui.ribbon->open_map_mpq, &QPushButton::clicked, this, &HiveWE::load_mpq);
-	connect(ui.ribbon->save_map, &QPushButton::clicked, this, &HiveWE::save);
-	connect(ui.ribbon->save_map_as, &QPushButton::clicked, this, &HiveWE::save_as);
-	connect(ui.ribbon->export_mpq, &QPushButton::clicked, this, &HiveWE::export_mpq);
-	connect(ui.ribbon->test_map, &QPushButton::clicked, this, &HiveWE::play_test);
-	connect(ui.ribbon->settings, &QPushButton::clicked, [&]() { new SettingsEditor(this); });
-	connect(ui.ribbon->switch_warcraft, &QPushButton::clicked, this, &HiveWE::switch_warcraft);
-	connect(ui.ribbon->exit, &QPushButton::clicked, [&]() { QApplication::exit(); });
+	connect(ui.ribbon->open_map_folder, &QAbstractButton::clicked, this, &HiveWE::load_folder);
+	connect(ui.ribbon->open_map_mpq, &QAbstractButton::clicked, this, &HiveWE::load_mpq);
+	connect(ui.ribbon->save_map, &QAbstractButton::clicked, this, &HiveWE::save);
+	connect(ui.ribbon->save_map_as, &QAbstractButton::clicked, this, &HiveWE::save_as);
+	connect(ui.ribbon->export_mpq, &QAbstractButton::clicked, this, &HiveWE::export_mpq);
+	connect(ui.ribbon->test_map, &QAbstractButton::clicked, this, &HiveWE::play_test);
+	connect(ui.ribbon->settings, &QAbstractButton::clicked, this, &HiveWE::open_settings_editor);
+	connect(ui.ribbon->switch_warcraft, &QAbstractButton::clicked, this, &HiveWE::switch_warcraft);
+	connect(ui.ribbon->exit, &QAbstractButton::clicked, this, []() { QApplication::exit(); });
 
-	connect(ui.ribbon->change_tileset, &QRibbonButton::clicked, [this]() { new TileSetter(this); });
-	connect(ui.ribbon->change_tile_pathing, &QRibbonButton::clicked, [this]() { new TilePather(this); });
+	connect(ui.ribbon->change_tileset, &QAbstractButton::clicked, this, &HiveWE::open_change_tileset);
+	connect(ui.ribbon->change_tile_pathing, &QAbstractButton::clicked, this, &HiveWE::open_change_tile_pathing);
 
-	connect(ui.ribbon->map_description, &QRibbonButton::clicked, [&]() { (new MapInfoEditor(this))->ui.tabs->setCurrentIndex(0); });
-	connect(ui.ribbon->map_loading_screen, &QRibbonButton::clicked, [&]() { (new MapInfoEditor(this))->ui.tabs->setCurrentIndex(1); });
-	connect(ui.ribbon->map_options, &QRibbonButton::clicked, [&]() { (new MapInfoEditor(this))->ui.tabs->setCurrentIndex(2); });
+	connect(ui.ribbon->map_description, &QAbstractButton::clicked, this, &HiveWE::open_map_description_editor);
+	connect(ui.ribbon->map_loading_screen, &QAbstractButton::clicked, this, &HiveWE::open_map_loading_screen_editor);
+	connect(ui.ribbon->map_options, &QAbstractButton::clicked, this, &HiveWE::open_map_options_editor);
 	// connect(ui, &QAction::triggered, [&]() { (new MapInfoEditor(this))->ui.tabs->setCurrentIndex(3); });
 
-	connect(new QShortcut(QKeySequence(Qt::Key_T), this, nullptr, nullptr, Qt::WindowShortcut), &QShortcut::activated, [&]() {
+	connect(new QShortcut(QKeySequence(Qt::Key_T), this, nullptr, nullptr, Qt::WindowShortcut), &QShortcut::activated, [this]() {
 		open_palette<TerrainPalette>();
 	});
 
-	connect(ui.ribbon->terrain_palette, &QRibbonButton::clicked, [this]() {
-		open_palette<TerrainPalette>();
-	});
+	connect(ui.ribbon->terrain_palette, &QAbstractButton::clicked, this, &HiveWE::open_terrain_palette);
 
-	connect(new QShortcut(QKeySequence(Qt::Key_D), this, nullptr, nullptr, Qt::WindowShortcut), &QShortcut::activated, [&]() {
+	connect(new QShortcut(QKeySequence(Qt::Key_D), this, nullptr, nullptr, Qt::WindowShortcut), &QShortcut::activated, [this]() {
 		open_palette<DoodadPalette>();
 	});
-	connect(ui.ribbon->doodad_palette, &QRibbonButton::clicked, [this]() {
-		open_palette<DoodadPalette>();
-	});
+	connect(ui.ribbon->doodad_palette, &QAbstractButton::clicked, this, &HiveWE::open_doodad_palette);
 
-	connect(new QShortcut(QKeySequence(Qt::Key_U), this, nullptr, nullptr, Qt::WindowShortcut), &QShortcut::activated, [&]() {
+	connect(new QShortcut(QKeySequence(Qt::Key_U), this, nullptr, nullptr, Qt::WindowShortcut), &QShortcut::activated, [this]() {
 		open_palette<UnitPalette>();
 	});
 
-	connect(ui.ribbon->unit_palette, &QRibbonButton::clicked, [this]() {
-		open_palette<UnitPalette>();
-	});
+	connect(ui.ribbon->unit_palette, &QAbstractButton::clicked, this, &HiveWE::open_unit_palette);
 
-	connect(new QShortcut(QKeySequence(Qt::Key_P), this, nullptr, nullptr, Qt::WindowShortcut), &QShortcut::activated, [&]() {
+	connect(new QShortcut(QKeySequence(Qt::Key_P), this, nullptr, nullptr, Qt::WindowShortcut), &QShortcut::activated, [this]() {
 		ui.ribbon->pathing_visible->setChecked(true);
 		open_palette<PathingPalette>();
 	});
 
-	connect(ui.ribbon->pathing_palette, &QRibbonButton::clicked, [this]() {
-		ui.ribbon->pathing_visible->setChecked(true);
-		open_palette<PathingPalette>();
-	});
+	connect(ui.ribbon->pathing_palette, &QAbstractButton::clicked, this, &HiveWE::open_pathing_palette);
 
-	connect(ui.ribbon->trigger_editor, &QRibbonButton::clicked, [this]() {
-		bool created = false;
-		const auto editor = window_handler.create_or_raise<TriggerEditor>(nullptr, created);
-		connect(this, &HiveWE::saving_initiated, editor, &TriggerEditor::save_changes, Qt::UniqueConnection);
-	});
+	connect(ui.ribbon->trigger_editor, &QAbstractButton::clicked, this, &HiveWE::open_trigger_editor);
 
-	connect(ui.ribbon->object_editor, &QRibbonButton::clicked, [this]() {
-		bool created = false;
-		window_handler.create_or_raise<ObjectEditor>(nullptr, created);
-	});
+	connect(ui.ribbon->object_editor, &QAbstractButton::clicked, this, &HiveWE::open_object_editor);
 
-	connect(ui.ribbon->model_editor, &QRibbonButton::clicked, [this]() {
-		bool created = false;
-		window_handler.create_or_raise<ModelEditor>(nullptr, created);
-	});
+	connect(ui.ribbon->model_editor, &QAbstractButton::clicked, this, &HiveWE::open_model_editor);
 
-	connect(ui.ribbon->gameplay_constants, &QRibbonButton::clicked, [this]() {
-		bool created = false;
-		window_handler.create_or_raise<GameplayConstantsEditor>(nullptr, created);
-	});
+	connect(ui.ribbon->gameplay_constants, &QAbstractButton::clicked, this, &HiveWE::open_gameplay_constants_editor);
 
-	connect(ui.ribbon->asset_manager, &QRibbonButton::clicked, [this]() {
-		bool created = false;
-		window_handler.create_or_raise<AssetManager>(nullptr, created);
-	});
+	connect(ui.ribbon->asset_manager, &QAbstractButton::clicked, this, &HiveWE::open_asset_manager_window);
 
 	restore_window_state();
 
@@ -304,7 +254,7 @@ void HiveWE::load_mpq() {
 	bool unpacked = mpq.unpack(final_directory);
 	if (!unpacked) {
 		QMessageBox::critical(this, "Unpacking failed", "There was an error unpacking the archive.");
-		std::println("{}", GetLastError());
+		std::cout << std::format("{}", GetLastError()) << '\n';
 		return;
 	}
 
@@ -372,7 +322,7 @@ void HiveWE::export_mpq() {
 	bool open = SFileCreateArchive(file_name.c_str(), MPQ_CREATE_LISTFILE | MPQ_CREATE_ATTRIBUTES, file_count, &handle);
 	if (!open) {
 		QMessageBox::critical(this, "Exporting failed", "There was an error creating the archive.");
-		std::println("{}", GetLastError());
+		std::cout << std::format("{}", GetLastError()) << '\n';
 		return;
 	}
 
@@ -380,7 +330,7 @@ void HiveWE::export_mpq() {
 		if (entry.is_regular_file()) {
 			bool success = SFileAddFileEx(handle, entry.path().c_str(), entry.path().lexically_relative(map->filesystem_path).string().c_str(), MPQ_FILE_COMPRESS, MPQ_COMPRESSION_ZLIB, MPQ_COMPRESSION_NEXT_SAME);
 			if (!success) {
-				std::println("Error {} adding file {}", GetLastError(), entry.path().string());
+				std::cout << std::format("Error {} adding file {}", GetLastError(), entry.path().string()) << '\n';
 			}
 		}
 	}
@@ -474,6 +424,111 @@ void HiveWE::import_heightmap() {
 	delete image_data;
 }
 
+void HiveWE::do_undo() {
+	// ToDo: temporary, undoing should still allow a selection to persist
+	if (map->brush) {
+		map->brush->clear_selection();
+	}
+
+	auto context = WorldEditContext {
+		.terrain = map->terrain,
+		.units = map->units,
+		.doodads = map->doodads,
+		.brush = map->brush,
+		.pathing_map = map->pathing_map,
+	};
+
+	map->world_undo.undo(context);
+}
+
+void HiveWE::do_redo() {
+	// ToDo: temporary, undoing should still allow a selection to persist
+	if (map->brush) {
+		map->brush->clear_selection();
+	}
+
+	auto context = WorldEditContext {
+		.terrain = map->terrain,
+		.units = map->units,
+		.doodads = map->doodads,
+		.brush = map->brush,
+		.pathing_map = map->pathing_map,
+	};
+
+	map->world_undo.redo(context);
+}
+
+void HiveWE::reset_camera_view() {
+	camera.reset();
+}
+
+void HiveWE::open_settings_editor() {
+	new SettingsEditor(this);
+}
+
+void HiveWE::open_change_tileset() {
+	new TileSetter(this);
+}
+
+void HiveWE::open_change_tile_pathing() {
+	new TilePather(this);
+}
+
+void HiveWE::open_map_description_editor() {
+	(new MapInfoEditor(this))->ui.tabs->setCurrentIndex(0);
+}
+
+void HiveWE::open_map_loading_screen_editor() {
+	(new MapInfoEditor(this))->ui.tabs->setCurrentIndex(1);
+}
+
+void HiveWE::open_map_options_editor() {
+	(new MapInfoEditor(this))->ui.tabs->setCurrentIndex(2);
+}
+
+void HiveWE::open_terrain_palette() {
+	open_palette<TerrainPalette>();
+}
+
+void HiveWE::open_doodad_palette() {
+	open_palette<DoodadPalette>();
+}
+
+void HiveWE::open_unit_palette() {
+	open_palette<UnitPalette>();
+}
+
+void HiveWE::open_pathing_palette() {
+	ui.ribbon->pathing_visible->setChecked(true);
+	open_palette<PathingPalette>();
+}
+
+void HiveWE::open_trigger_editor() {
+	bool created = false;
+	const auto editor = window_handler.create_or_raise<TriggerEditor>(nullptr, created);
+	connect(this, &HiveWE::saving_initiated, editor, &TriggerEditor::save_changes, Qt::UniqueConnection);
+}
+
+void HiveWE::open_object_editor() {
+	bool created = false;
+	window_handler.create_or_raise<ObjectEditor>(nullptr, created);
+}
+
+void HiveWE::open_model_editor() {
+	bool created = false;
+	window_handler.create_or_raise<ModelEditor>(nullptr, created);
+}
+
+void HiveWE::open_gameplay_constants_editor() {
+	bool created = false;
+	window_handler.create_or_raise<GameplayConstantsEditor>(nullptr, created);
+}
+
+void HiveWE::open_asset_manager_window() {
+	bool created = false;
+	window_handler.create_or_raise<AssetManager>(nullptr, created);
+}
+
 void HiveWE::save_window_state() {
 	QSettings settings;
 
@@ -525,3 +580,5 @@ void HiveWE::remove_custom_tab() {
 		}
 	}
 }
+
+#include "moc_hivewe.cpp"

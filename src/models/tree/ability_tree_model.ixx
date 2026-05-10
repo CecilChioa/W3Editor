@@ -30,7 +30,7 @@ export class AbilityTreeModel : public BaseTreeModel {
 		const std::string_view race = abilities_slk.data<std::string_view>("race", id);
 		auto found_race = categories.find(race);
 		if (found_race == categories.end()) {
-			std::println("Warning: Empty or invalid race for ability ID `{}`, race `{}`", id, race);
+			std::cout << std::format("Warning: Empty or invalid race for ability ID `{}`, race `{}`", id, race) << '\n';
 			return nullptr;
 		}
 		const bool isHero = abilities_slk.data<bool>("hero", id);

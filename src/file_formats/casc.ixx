@@ -5,8 +5,11 @@ import types;
 import no_init_allocator;
 import BinaryReader;
 import <CascLib.h>;
+import <outcome/outcome.hpp>;
 
 namespace fs = std::filesystem;
+using OUTCOME_V2_NAMESPACE::failure;
+using OUTCOME_V2_NAMESPACE::result;
 
 // A thin wrapper around CascLib https://github.com/ladislav-zezula/CascLib
 namespace casc {
