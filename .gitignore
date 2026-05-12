@@ -1,0 +1,57 @@
+# Build outputs
+build/
+out/
+dist/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+DartConfiguration.tcl
+Testing/
+compile_commands.json
+
+# vcpkg generated dependencies
+vcpkg_installed/
+
+# Runtime artifacts and diagnostics
+artifacts/
+logs/
+diagnostics/
+*.log
+*.jsonl
+
+# Editor and OS local files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.swp
+*.tmp
+*.bak
+Thumbs.db
+Desktop.ini
+
+# Binaries and debug symbols
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.obj
+*.o
+*.a
+*.so
+*.dylib
+
+# Generated map round-trip outputs
+*.roundtrip.w3x
+*.roundtrip.w3m
+*_roundtrip.w3x
+*_roundtrip.w3m
+
+界面参考/
+testmap/
+*.w3x
